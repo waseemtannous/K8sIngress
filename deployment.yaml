@@ -1,0 +1,164 @@
+# bitcoin-price deployment
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: bitcoin-price-deployment
+  labels:
+    app: bitcoin-price
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitcoin-price
+  template:
+    metadata:
+      labels:
+        app: bitcoin-price
+    spec:
+      containers:
+        - name: bitcoin-price
+          image: bitcoin-price:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: SERVER_PORT
+              value: "5000"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+
+---
+# bitcoin-price service
+apiVersion: v1
+kind: Service
+metadata:
+  name: bitcoin-price-service
+spec:
+  selector:
+    app: bitcoin-price
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+# redis deployment
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+
+---
+# redis service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+
+spec:
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  type: ClusterIP
+
+---
+# Ynet News deployment
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: ynet-news-deployment
+  labels:
+    app: ynet-news
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ynet-news
+  template:
+    metadata:
+      labels:
+        app: ynet-news
+    spec:
+      containers:
+        - name: ynet-news
+          image: ynet-news:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+
+---
+# bitcoin-price service
+apiVersion: v1
+kind: Service
+metadata:
+  name: ynet-news-service
+spec:
+  selector:
+    app: ynet-news
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+# ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /bitcoin-price
+            pathType: Prefix
+            backend:
+              service:
+                name: bitcoin-price-service
+                port:
+                  number: 5000
+    - http:
+        paths:
+          - path: /ynet-news
+            pathType: Prefix
+            backend:
+              service:
+                name: ynet-news-service
+                port:
+                  number: 5000

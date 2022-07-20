@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: bitcoin-price-deployment
+  labels:
+    app: bitcoin-price
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitcoin-price
+  template:
+    metadata:
+      labels:
+        app: bitcoin-price
+    spec:
+      containers:
+        - name: bitcoin-price
+          image: waseemtannous/bitcoin-price:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+
+            - name: REDIS_PORT
+              value: "6379"
+
+            - name: SERVER_PORT
+              value: "5000"
+
+---
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  labels:
+    app: bitcoin-price
+  name: bitcoin-price-service
+
+spec:
+  selector:
+    app: bitcoin-price
+  ports:
+    - protocol: TCP
+      port: 5000 # host port
+      targetPort: 5000 # container port
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: redis-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+
+---
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: redis
+  labels:
+    app: redis
+
+spec:
+  selector:
+    app: redis
+  ports:
+    - name: redis
+      port: 6379 # host port
+      targetPort: 6379 # container port
+  type: LoadBalancer

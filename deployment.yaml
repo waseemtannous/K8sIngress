@@ -34,10 +34,13 @@ spec:
 
 ---
 # bitcoin-price service
+
 apiVersion: v1
 kind: Service
+
 metadata:
   name: bitcoin-price-service
+
 spec:
   selector:
     app: bitcoin-price
@@ -77,8 +80,10 @@ spec:
 
 ---
 # redis service
+
 apiVersion: v1
 kind: Service
+
 metadata:
   name: redis
 
@@ -121,10 +126,13 @@ spec:
 
 ---
 # bitcoin-price service
+
 apiVersion: v1
 kind: Service
+
 metadata:
   name: ynet-news-service
+
 spec:
   selector:
     app: ynet-news
@@ -138,10 +146,12 @@ spec:
 # ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
+
 metadata:
   name: bingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+
 spec:
   rules:
     - http:

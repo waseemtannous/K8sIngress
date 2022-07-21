@@ -1,10 +1,5 @@
 FROM python:3.7-alpine
 
-# install git
-# RUN apk update
-# RUN apk add git
-
-# RUN git clone https://github.com/waseemtannous/BitcoinPrice.git
 COPY /BitcoinPrice /BitcoinPrice
 
 WORKDIR /BitcoinPrice

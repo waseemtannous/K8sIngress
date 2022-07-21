@@ -42,30 +42,3 @@ Also, created a token from Docker to push the image to Docker Hub and set the to
 ![](images/dockerhubRepo.png)
 
 After that, Jenkins will notify when the build and push is done using Slack.
-
-## Kubenetes
-
-```sh
-cd BitcoinPrice
-minikube start
-kubectl create -f pod.yaml
-```
-
-## Kubernetes (minikube)
-
-To deploy the application locally to minikube, run the following commands:
-
-```sh
-git clone https://github.com/waseemtannous/BitcoinPrice.git
-minikube start
-kubectl apply -f k8sDeployment.yaml
-minikube tunnel
-```
-
-Now you can access the application at http://localhost:5000/
-
-To stop deployment, run:
-
-```sh
-minikube delete
-```

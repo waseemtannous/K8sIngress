@@ -35,8 +35,8 @@ minikube tunnel
 
 Now, you can access the apps by pointing your browser to the following URLs:
 
-- https://localhost/bitcoin-price
-- https://localhost/ynet-news
+- http://localhost/bitcoin-price
+- http://localhost/ynet-news
 
 To stop the deployment run the following command:
 
